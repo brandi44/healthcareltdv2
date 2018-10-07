@@ -40,7 +40,10 @@ html,body{
 #container form#find label {font-size: 13px; color: #000; float:left; margin-right: 20px;}
 #container form#find input {border: 1px solid #ccc; border-radius: 3px; padding: 5px 10px; width: 86%;}
 #container #content {margin-top: 20px;}
-
+#container #left-content {
+	width: 10%;
+	float: left;}
+#container #right-content { width: 67%; float: right;}
 .add-button {
 	border: 1px solid #666; 
 	border-radius: 5px; 
@@ -53,3 +56,4 @@ html,body{
 	margin-bottom: 15px;
 	background: #cccccc;
 }
+

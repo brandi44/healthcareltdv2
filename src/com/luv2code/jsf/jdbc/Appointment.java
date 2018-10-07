@@ -1,8 +1,12 @@
 package com.luv2code.jsf.jdbc;
 
+import java.util.Date;
+
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 
 @ManagedBean
+@SessionScoped
 
 public class Appointment {
 	private int appointmentId;
@@ -12,7 +16,8 @@ public class Appointment {
 	private String startDay;
 	private String startTime;
 	private String endTime;
-	private String notes;
+	private String notes; 
+	
 
 	public Appointment() {
 
