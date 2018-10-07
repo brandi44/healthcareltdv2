@@ -1,6 +1,7 @@
 package com.luv2code.jsf.jdbc;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -20,6 +21,7 @@ public class AppointmentController {
 	private String appointmentSearchInput;
 	private List<Appointment> appointmentSearchResults;
 	private List<Appointment> appointments;
+	private List<Appointment> appointmentsByDate;
 	private AppointmentDbUtil appointmentDbUtil;
 	private Logger logger = Logger.getLogger(getClass().getName());
 
@@ -45,10 +47,12 @@ public class AppointmentController {
 	public List<Appointment> getAppointments() {
 		return appointments;
 	}
+	public List<Appointment> getAppointmentsByDate() {
+		return appointmentsByDate;
+	}
 	
 	
 	
-
 	public void loadAppointments() {
 
 		logger.info("Loading appointments");
@@ -100,7 +104,11 @@ public class AppointmentController {
 	}
 	
 	
-
+			
+	
+	
+		
+	
 	public String loadAppointment(int appointmentId) {
 		
 		logger.info("loading appointment: " + appointmentId);
@@ -126,6 +134,32 @@ public class AppointmentController {
 		}
 				
 		return "update-appointment-form.xhtml";
+	}
+public String loadAppointmentbyDate(Appointment appointmentsdate) {
+		
+		logger.info("loading appointment: " + appointmentsdate.getStartDay());
+		
+		try {
+			// get appointment from database
+			Appointment theAppointment = appointmentDbUtil.getAppointmentByDate(appointmentsdate.getStartDay());
+			appointmentsByDate.add(theAppointment);
+			// put in the request attribute ... so we can use it on the form page
+			ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();		
+
+			Map<String, Object> requestMap = externalContext.getRequestMap();
+			requestMap.put("appointment", theAppointment);	
+			
+		} catch (Exception exc) {
+			// send this to server logs
+			logger.log(Level.SEVERE, "Error loading appointment id:" + appointmentsdate.getStartDay(), exc);
+			
+			// add error message for JSF page
+			addErrorMessage(exc);
+			
+			return null;
+		}
+				
+		return "list-appointments.xhtml";
 	}
 	
 
@@ -177,14 +211,16 @@ public class AppointmentController {
 		return "list-appointments";	
 	}	
 	
-	
-	public String searchAppointment() {
+
+
+	public String searchAppointmentByDate() {
 		try {
 			if(!appointments.isEmpty()) {
 				for(int i = 0; i < appointments.size(); i++) {
-					if (appointments.get(i).getTitle().equals(appointmentSearchInput)) {
+					if (appointments.get(i).getStartDay().equals(appointmentSearchInput)) {
 						loadAppointment(appointments.get(i).getAppointmentId());
 						System.out.println("Found");
+						
 						}
 				}
 			}else {
@@ -196,7 +232,37 @@ public class AppointmentController {
 			addErrorMessage(exc);
 			
 		}
+		return "lis-appointments.xhtml";
+	}
+
+	public String searchAppointment() {
+		try {
+			if(!appointments.isEmpty()) {
+				for(int i = 0; i < appointments.size(); i++) {
+					if(!isDuplicate(appointments.get(i))) {
+						if (appointments.get(i).getTitle().equals(appointmentSearchInput)) {
+							loadAppointment(appointments.get(i).getAppointmentId());
+							}
+					}
+				}
+			}else {
+				System.out.println("No appointments to search for");
+			}
+			
+		}catch(Exception exc) {
+			logger.log(Level.SEVERE, "Error found when searching for appointments", exc);
+			addErrorMessage(exc);
+			
+		}
 		return "list-results";
+	}
+	
+	private boolean isDuplicate(Appointment appointment) {
+		for(int i = 0; i < appointmentSearchResults.size(); i++) {
+			if(appointmentSearchResults.get(i).getId() == apointment.getId())
+				return true;
+		}
+		return false;
 	}
 	
 	public String clearResults() {

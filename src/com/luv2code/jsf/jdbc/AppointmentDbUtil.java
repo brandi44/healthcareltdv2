@@ -1,9 +1,11 @@
 package com.luv2code.jsf.jdbc;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.naming.Context;
@@ -20,22 +22,22 @@ public class AppointmentDbUtil {
 		if (instance == null) {
 			instance = new AppointmentDbUtil();
 		}
-		
+
 		return instance;
 	}
-	
-	private AppointmentDbUtil() throws Exception {		
+
+	private AppointmentDbUtil() throws Exception {
 		dataSource = getDataSource();
 	}
 
 	private DataSource getDataSource() throws NamingException {
 		Context context = new InitialContext();
-		
+
 		DataSource theDataSource = (DataSource) context.lookup(jndiName);
-		
+
 		return theDataSource;
 	}
-	
+
 	public List<Appointment> getAppointments() throws Exception {
 
 		List<Appointment> appointments = new ArrayList<>();
@@ -43,7 +45,7 @@ public class AppointmentDbUtil {
 		Connection myConn = null;
 		Statement myStmt = null;
 		ResultSet myRs = null;
-		
+
 		try {
 			myConn = getConnection();
 
@@ -55,32 +57,32 @@ public class AppointmentDbUtil {
 
 			// process result set
 			while (myRs.next()) {
-				
+
 				// retrieve data from result set row
 				int appointmentId = myRs.getInt("Appointmentid");
 				int patientId = myRs.getInt("Patientid");
-			    int userId = myRs.getInt("Userid");
-			    String title = myRs.getString("Appointmenttitle");
+				int userId = myRs.getInt("Userid");
+				String title = myRs.getString("Appointmenttitle");
 				String startDay = myRs.getString("Appointmentstartday");
 				String startTime = myRs.getString("Appointmentstarttime");
-			    String endTime = myRs.getString("Appointmentendtime");
-			    String notes = myRs.getString("Appointmentnotes");
+				String endTime = myRs.getString("Appointmentendtime");
+				String notes = myRs.getString("Appointmentnotes");
 
 				// create new appointment object
-				//Appointment tempAppointment = new Appointment(id, firstName, lastName,email);
-			    Appointment tempAppointment = new Appointment(appointmentId, patientId, userId, title, startDay, startTime, endTime, notes);
+				// Appointment tempAppointment = new Appointment(id, firstName, lastName,email);
+				Appointment tempAppointment = new Appointment(appointmentId, patientId, userId, title, startDay,
+						startTime, endTime, notes);
 
 				// add it to the list of appointments
 				appointments.add(tempAppointment);
 			}
-			
-			return appointments;		
-		}
-		finally {
-			close (myConn, myStmt, myRs);
+
+			return appointments;
+		} finally {
+			close(myConn, myStmt, myRs);
 		}
 	}
-	
+
 	public void addAppointment(Appointment theAppointment) throws Exception {
 
 		Connection myConn = null;
@@ -100,112 +102,155 @@ public class AppointmentDbUtil {
 			myStmt.setString(4, theAppointment.getStartTime());
 			myStmt.setString(5, theAppointment.getEndTime());
 			myStmt.setString(6, theAppointment.getNotes());
-			
-			myStmt.execute();			
+
+			myStmt.execute();
+		} finally {
+			close(myConn, myStmt);
 		}
-		finally {
-			close (myConn, myStmt);
-		}
-		
+
 	}
-	//Bug
-	public Appointment getAppointment(int appointmentId1) throws Exception {
-	
+	// Bug
+
+
+	public Appointment getAppointmentByDate(String startday1) throws Exception {
+
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
 		ResultSet myRs = null;
-		
+
+		try {
+			myConn = getConnection();
+
+			String sql = "select * from appointment where Appointmentstartday=?";
+
+			myStmt = myConn.prepareStatement(sql);
+
+			// set params
+			myStmt.setString(1, startday1);
+
+			myRs = myStmt.executeQuery();
+
+			Appointment theAppointment = null;
+
+			// retrieve data from result set row
+			if (myRs.next()) {
+
+				int appointmentId = myRs.getInt("Appointmentid");
+				int patientId = myRs.getInt("Patientid");
+				int userId = myRs.getInt("Userid");
+				String title = myRs.getString("Appointmenttitle");
+				String startDay = myRs.getString("Appointmentstartday");
+				String startTime = myRs.getString("Appointmentstarttime");
+				String endTime = myRs.getString("Appointmentendtime");
+				String notes = myRs.getString("Appointmentnotes");
+
+				theAppointment = new Appointment(appointmentId, patientId, userId, title, startDay, startTime, endTime,
+						notes);
+
+			} else {
+				throw new Exception("Could not find an appointment with appointment date of: " + startday1);
+			}
+
+			return theAppointment;
+		} finally {
+			close(myConn, myStmt, myRs);
+		}
+	}
+
+
+	
+	
+
+	public Appointment getAppointment(int appointmentId1) throws Exception {
+
+		Connection myConn = null;
+		PreparedStatement myStmt = null;
+		ResultSet myRs = null;
+
 		try {
 			myConn = getConnection();
 
 			String sql = "select * from appointment where Appointmentid=?";
 
 			myStmt = myConn.prepareStatement(sql);
-			
+
 			// set params
 			myStmt.setInt(1, appointmentId1);
-			
+
 			myRs = myStmt.executeQuery();
 
 			Appointment theAppointment = null;
-			
-			
+
 			// retrieve data from result set row
 			if (myRs.next()) {
-				
+
 				int appointmentId = myRs.getInt("Appointmentid");
 				int patientId = myRs.getInt("Patientid");
-			    int userId = myRs.getInt("Userid");
-			    String title = myRs.getString("Appointmenttitle");
+				int userId = myRs.getInt("Userid");
+				String title = myRs.getString("Appointmenttitle");
 				String startDay = myRs.getString("Appointmentstartday");
 				String startTime = myRs.getString("Appointmentstarttime");
-			    String endTime = myRs.getString("Appointmentendtime");
-			    String notes = myRs.getString("Appointmentnotes");
+				String endTime = myRs.getString("Appointmentendtime");
+				String notes = myRs.getString("Appointmentnotes");
 
+				theAppointment = new Appointment(appointmentId, patientId, userId, title, startDay, startTime, endTime,
+						notes);
 
-				theAppointment = new Appointment(appointmentId, patientId, userId, title, startDay, startTime, endTime, notes);
-				
-			}
-			else {
+			} else {
 				throw new Exception("Could not find an appointment with appointment ID: " + appointmentId1);
 			}
 
 			return theAppointment;
-		}
-		finally {
-			close (myConn, myStmt, myRs);
+		} finally {
+			close(myConn, myStmt, myRs);
 		}
 	}
-	
-	
+
 	public Appointment getExistingAppointment(String startDay1, String startTime1) throws Exception {
-		
+
 		Connection myConn = null;
 		PreparedStatement myStmt = null;
 		ResultSet myRs = null;
-		
+
 		try {
 			myConn = getConnection();
 
 			String sql = "select * from appointment where Appointmentid=?";
 
 			myStmt = myConn.prepareStatement(sql);
-			
+
 			// set params
 			myStmt.setString(1, startDay1);
-			
+
 			myRs = myStmt.executeQuery();
 
 			Appointment theAppointment = null;
-			
-			
+
 			// retrieve data from result set row
 			if (myRs.next()) {
-				
+
 				int appointmentId = myRs.getInt("Appointmentid");
 				int patientId = myRs.getInt("Patientid");
-			    int userId = myRs.getInt("Userid");
-			    String title = myRs.getString("Appointmenttitle");
+				int userId = myRs.getInt("Userid");
+				String title = myRs.getString("Appointmenttitle");
 				String startDay = myRs.getString("Appointmentstartday");
 				String startTime = myRs.getString("Appointmentstarttime");
-			    String endTime = myRs.getString("Appointmentendtime");
-			    String notes = myRs.getString("Appointmentnotes");
+				String endTime = myRs.getString("Appointmentendtime");
+				String notes = myRs.getString("Appointmentnotes");
 
+				theAppointment = new Appointment(appointmentId, patientId, userId, title, startDay, startTime, endTime,
+						notes);
 
-				theAppointment = new Appointment(appointmentId, patientId, userId, title, startDay, startTime, endTime, notes);
-				
-			}
-			else {
+			} else {
 				throw new Exception("Could not find an appointment with appointment ID: " + startDay1);
 			}
 
 			return theAppointment;
-		}
-		finally {
-			close (myConn, myStmt, myRs);
+		} finally {
+			close(myConn, myStmt, myRs);
 		}
 	}
-	
+
 	public void updateAppointment(Appointment theAppointment) throws Exception {
 
 		Connection myConn = null;
@@ -215,8 +260,8 @@ public class AppointmentDbUtil {
 			myConn = getConnection();
 
 			String sql = "update appointment"
-						+ " set Patientid=?, Appointmenttitle=?, Appointmentstartday=?, Appointmentstarttime=?, Appointmentendtime=?, Appointmentnotes=?"
-						+ " where Appointmentid=?";
+					+ " set Patientid=?, Appointmenttitle=?, Appointmentstartday=?, Appointmentstarttime=?, Appointmentendtime=?, Appointmentnotes=?"
+					+ " where Appointmentid=?";
 
 			myStmt = myConn.prepareStatement(sql);
 
@@ -227,15 +272,14 @@ public class AppointmentDbUtil {
 			myStmt.setString(4, theAppointment.getStartTime());
 			myStmt.setString(5, theAppointment.getEndTime());
 			myStmt.setString(6, theAppointment.getNotes());
-			myStmt.setInt(7,  theAppointment.getAppointmentId());
+			myStmt.setInt(7, theAppointment.getAppointmentId());
 			myStmt.execute();
+		} finally {
+			close(myConn, myStmt);
 		}
-		finally {
-			close (myConn, myStmt);
-		}
-		
+
 	}
-	
+
 	public void deleteAppointment(int appointmentId) throws Exception {
 
 		Connection myConn = null;
@@ -250,25 +294,24 @@ public class AppointmentDbUtil {
 
 			// set params
 			myStmt.setInt(1, appointmentId);
-			
+
 			myStmt.execute();
+		} finally {
+			close(myConn, myStmt);
 		}
-		finally {
-			close (myConn, myStmt);
-		}		
-	}	
-	
+	}
+
 	private Connection getConnection() throws Exception {
 
 		Connection theConn = dataSource.getConnection();
-		
+
 		return theConn;
 	}
-	
+
 	private void close(Connection theConn, Statement theStmt) {
 		close(theConn, theStmt, null);
 	}
-	
+
 	private void close(Connection theConn, Statement theStmt, ResultSet theRs) {
 
 		try {
@@ -283,14 +326,10 @@ public class AppointmentDbUtil {
 			if (theConn != null) {
 				theConn.close();
 			}
-			
+
 		} catch (Exception exc) {
 			exc.printStackTrace();
 		}
 	}
-	
-	
-	
-	
-	
+
 }

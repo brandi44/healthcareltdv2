@@ -242,12 +242,14 @@ public class PatientController {
 		try {
 			if(!patients.isEmpty()){
 				for(int i = 0; i < patients.size(); i++) {
-					String firstName = patients.get(i).getFirstName();
-					String lastName = patients.get(i).getLastName();
-					String fullName = firstName + " " + lastName;
-					
-					if(firstName.equals(patientSearchInput) || lastName.equals(patientSearchInput) || fullName.equals(patientSearchInput)) {
-						loadPatient(patients.get(i).getId());
+					if(!isDuplicate(patients.get(i))) {
+						String firstName = patients.get(i).getFirstName();
+						String lastName = patients.get(i).getLastName();
+						String fullName = firstName + " " + lastName;
+						
+						if(firstName.equals(patientSearchInput) || lastName.equals(patientSearchInput) || fullName.equals(patientSearchInput)) {
+							loadPatient(patients.get(i).getId());
+						}
 					}
 				}
 			}
@@ -260,6 +262,14 @@ public class PatientController {
 			return null;
 		}
 		return "list-results";
+	}
+	
+	private boolean isDuplicate(Patient patient) {
+		for(int i = 0; i < patientSearchResults.size(); i++) {
+			if(patientSearchResults.get(i).getId() == patient.getId())
+				return true;
+		}
+		return false;
 	}
 	
 	public String clearResults() {
