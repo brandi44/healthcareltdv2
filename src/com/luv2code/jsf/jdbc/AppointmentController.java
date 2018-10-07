@@ -239,10 +239,11 @@ public String loadAppointmentbyDate(Appointment appointmentsdate) {
 		try {
 			if(!appointments.isEmpty()) {
 				for(int i = 0; i < appointments.size(); i++) {
-					if (appointments.get(i).getTitle().equals(appointmentSearchInput)) {
-						loadAppointment(appointments.get(i).getAppointmentId());
-						System.out.println("Found");
-						}
+					if(!isDuplicate(appointments.get(i))) {
+						if (appointments.get(i).getTitle().equals(appointmentSearchInput)) {
+							loadAppointment(appointments.get(i).getAppointmentId());
+							}
+					}
 				}
 			}else {
 				System.out.println("No appointments to search for");
@@ -254,6 +255,14 @@ public String loadAppointmentbyDate(Appointment appointmentsdate) {
 			
 		}
 		return "list-results";
+	}
+	
+	private boolean isDuplicate(Appointment appointment) {
+		for(int i = 0; i < appointmentSearchResults.size(); i++) {
+			if(appointmentSearchResults.get(i).getId() == apointment.getId())
+				return true;
+		}
+		return false;
 	}
 	
 	public String clearResults() {
