@@ -257,9 +257,12 @@ public String loadAppointmentbyDate(Appointment appointmentsdate) {
 		return "list-results";
 	}
 	
+	//filter by category
+	
+	
 	private boolean isDuplicate(Appointment appointment) {
 		for(int i = 0; i < appointmentSearchResults.size(); i++) {
-			if(appointmentSearchResults.get(i).getId() == apointment.getId())
+			if(appointmentSearchResults.get(i).getAppointmentId() == appointment.getAppointmentId())
 				return true;
 		}
 		return false;
