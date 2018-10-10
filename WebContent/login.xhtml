@@ -41,11 +41,8 @@
 				<h:outputLabel>Password:</h:outputLabel> <h:inputSecret value="#{userpw.password}" id="password" type="password" required="true"
             							requiredMessage="Please enter Password."/> <h:message for="password" />
 				
-		
-				
-				 
 
-				<h:commandButton id="submit" value="submit" styleClass="save" type="submit" action="#{userpwController.loginAction(userpw)}"/>
+				<h:commandButton id="submit" value="submit" styleClass="save" action="#{userpwController.loginAction(userpw)}"/>
 			
 			</h:panelGrid>
 		</h:form>
