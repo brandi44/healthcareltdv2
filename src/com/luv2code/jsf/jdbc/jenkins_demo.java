@@ -8,8 +8,6 @@ public class jenkins_demo {
 /**
 * @param args
 */
-
-
        public static void main(String[] args) {
     	   String exePath = "C:\\Users\\jelis\\Desktop\\SEP\\chromedriver.exe";
     	   System.setProperty("webdriver.chrome.driver", exePath);
@@ -24,7 +22,6 @@ public class jenkins_demo {
 // maximize the browser window
               driver.manage().window().maximize();
              
-              
 // declare and initialize the variable to store the expected title of the webpage.
               String expectedTitle = "Healthcareltd";
              
