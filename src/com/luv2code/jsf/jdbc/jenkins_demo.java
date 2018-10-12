@@ -39,15 +39,14 @@ public class jenkins_demo {
               }
 
 // enter a valid username in the email textbox
-              Userpw userpw = new Userpw("username", "password");
               WebElement username = driver.findElement(By.id("form:username"));
               username.clear();
-              username.sendKeys(userpw.getUsername());
+              username.sendKeys("Test");
              
 // enter a valid password in the password textbox
               WebElement password = driver.findElement(By.id("form:password"));
               password.clear();
-              password.sendKeys(userpw.getPassword());
+              password.sendKeys("123");
              
 // click on the Sign in button
               WebElement SignInButton = driver.findElement(By.id("form:submit"));
