@@ -23,5 +23,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="C:/Users/jelis/Desktop/SEP/selenium-server-standalone-3.14.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files/Java/jdk1.8.0_92"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
