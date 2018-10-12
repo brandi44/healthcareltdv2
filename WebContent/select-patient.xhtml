@@ -36,7 +36,7 @@
 			<h:button value="Appointment overview" styleClass="add-button" outcome="list-appointments"/>
 			<h:button value="Add Appointment" styleClass="add-button" outcome="add-appointments"/>	
 			<h:button value="Search" styleClass="add-button" outcome="search"/>
-			<h:form>
+			<h:form id="table">
 						
 			<h:dataTable value="#{patientController.patients}" var="tempPatient"
 				styleClass="demo-table" 
@@ -98,7 +98,7 @@
 					<f:facet name="header">Action</f:facet>
 
 					<!--  the value for each row -->
-					<h:commandLink value="Select"
+					<h:commandLink value="Select" id="select"
 						action="#{patientController.loadPatientApp(tempPatient.id)}"
 						/>
 					|

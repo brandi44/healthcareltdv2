@@ -9,12 +9,12 @@ public class jenkins_demo {
 * @param args
 */
        public static void main(String[] args) {
-    	   String exePath = "C:\\Users\\brand\\Desktop\\SEP\\chromedriver.exe";
+    	   String exePath = "C:\\Users\\jelis\\Desktop\\SEP\\chromedriver.exe";
     	   System.setProperty("webdriver.chrome.driver", exePath);
     	   
 // objects and variables instantiation
               WebDriver driver = new ChromeDriver();
-              String appUrl = "http://localhost:8081/Healthcareltd/faces/login.xhtml";
+              String appUrl = "http://localhost:8080/Healthcareltd/faces/login.xhtml";
              
 // launch the chrome browser and open the application url
               driver.get(appUrl);
@@ -39,22 +39,24 @@ public class jenkins_demo {
               }
 
 // enter a valid username in the email textbox
+              Userpw userpw = new Userpw("username", "password");
               WebElement username = driver.findElement(By.id("form:username"));
               username.clear();
-              username.sendKeys("TestSelenium");
+              username.sendKeys(userpw.getUsername());
              
 // enter a valid password in the password textbox
               WebElement password = driver.findElement(By.id("form:password"));
               password.clear();
-              password.sendKeys("password123");
+              password.sendKeys(userpw.getPassword());
              
 // click on the Sign in button
               WebElement SignInButton = driver.findElement(By.id("form:submit"));
               SignInButton.click();
              
 // close the web browser
-              driver.close();
+
               System.out.println("Test script executed successfully.");
+              driver.close();
              
 // terminate the program
               System.exit(0);
